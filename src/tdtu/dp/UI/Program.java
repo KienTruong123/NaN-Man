@@ -3,7 +3,7 @@ package tdtu.dp.UI;
 public class Program {
 
 	public static void main(String[] args) {
-		GameFrame gameFrame = new GameFrame();
+		GFrame gameFrame = new GFrame();
 		gameFrame.setVisible(true);
 		gameFrame.startGame();
 	}

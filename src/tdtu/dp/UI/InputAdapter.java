@@ -2,41 +2,54 @@ package tdtu.dp.UI;
 
 import java.awt.event.KeyEvent;
 
-import tdtu.dp.Objects.Man;
+import tdtu.dp.Objects.GWorld;
+import tdtu.dp.Objects.Particle;
 
 public class InputAdapter {
 
-	GamePanel gamePanel;
+	private GWorld gameWorld;
 
-	public InputAdapter(GamePanel g) {
+	public GWorld getGameWorld() {
+		return gameWorld;
+	}
+
+	public void setGameWorld(GWorld gameWorld) {
+		this.gameWorld = gameWorld;
+	}
+
+	public InputAdapter(GWorld g) {
 		// TODO Auto-generated constructor stub
-		gamePanel = g;
+		gameWorld = g;
 	}
 
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 		if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-			gamePanel.man.setDirection(Man.DIR_LEFT);
-			gamePanel.man.setSpeedX(-5);
+			getGameWorld().getMan().setDirection(Particle.LEFT_DIR);
+			getGameWorld().getMan().run();
 		} else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-			gamePanel.man.setDirection(Man.DIR_RIGHT);
-			gamePanel.man.setSpeedX(5);
+			getGameWorld().getMan().setDirection(Particle.RIGHT_DIR);
+			getGameWorld().getMan().run();
 		} else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
 
 		} else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
 
 		} else if (key == KeyEvent.VK_SPACE) {
-			gamePanel.man.setSpeedY(-5);
-			gamePanel.man.setY(gamePanel.man.getY()-10);
+			getGameWorld().getMan().jump();
+		}else if (key == KeyEvent.VK_F) {
+			getGameWorld().getMan().attack();
 		}
 	}
-	
+
 	public void keyRelease(KeyEvent e) {
 		int key = e.getKeyCode();
 		if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-			gamePanel.man.setSpeedX(0);
+			if (getGameWorld().getMan().getSpeedX() < 0)
+				getGameWorld().getMan().stop();
+			;
 		} else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-			gamePanel.man.setSpeedX(0);
+			if (getGameWorld().getMan().getSpeedX() > 0)
+				getGameWorld().getMan().stop();
 		} else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
 
 		} else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {

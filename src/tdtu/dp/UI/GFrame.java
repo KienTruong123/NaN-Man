@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 
 import tdtu.dp.effect.DataLoader;
 
-public class GameFrame extends JFrame {
+public class GFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class GameFrame extends JFrame {
 
 	GamePanel gamePanel = null;
 
-	public GameFrame() throws HeadlessException {
+	public GFrame() throws HeadlessException {
 		Toolkit toolkit = this.getToolkit();
 		Dimension dimension = toolkit.getScreenSize();
 		this.setBounds((dimension.width - SCREEN_WIDTH) / 2, (dimension.height - SCREEN_HEIGHT) / 2, SCREEN_WIDTH,
@@ -41,17 +41,17 @@ public class GameFrame extends JFrame {
 		gamePanel.startGame();
 	}
 
-	public GameFrame(GraphicsConfiguration gc) {
+	public GFrame(GraphicsConfiguration gc) {
 		super(gc);
 		// TODO Auto-generated constructor stub
 	}
 
-	public GameFrame(String title) throws HeadlessException {
+	public GFrame(String title) throws HeadlessException {
 		super(title);
 		// TODO Auto-generated constructor stub
 	}
 
-	public GameFrame(String title, GraphicsConfiguration gc) {
+	public GFrame(String title, GraphicsConfiguration gc) {
 		super(title, gc);
 		// TODO Auto-generated constructor stub  
 	}

@@ -9,20 +9,22 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 
+import tdtu.dp.Objects.GWorld;
 import tdtu.dp.Objects.Man;
-import tdtu.dp.Objects.Map;
+import tdtu.dp.Objects.GMap;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
+	private static final long serialVersionUID = 747127086860201323L;
 	private Thread thread;
 	private boolean isRunning;
 	private InputAdapter inputAdapter;
+	private GWorld gameWorld;
 
-	Man man = new Man(300, 400, 100, 100, 0.1f);
-	Map map = new Map(0, 0); 
 	public GamePanel() {
 		// TODO Auto-generated constructor stub
-		inputAdapter = new InputAdapter(this);
+		setGameWorld(new GWorld());
+		inputAdapter = new InputAdapter(getGameWorld());
 	}
 
 	public void startGame() {
@@ -34,7 +36,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	}
 
 	public void update() {
-		man.update();
+		gameWorld.update();
 		repaint();
 	}
 
@@ -43,9 +45,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		// TODO Auto-generated method stub
 
 		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, GameFrame.SCREEN_WIDTH, GameFrame.SCREEN_HEIGHT);
-//		man.paint(g);
-		map.draw(g);	}
+		g.fillRect(0, 0, GFrame.SCREEN_WIDTH, GFrame.SCREEN_HEIGHT);
+		gameWorld.render(g);
+		}
 
 	@Override
 	public void run() {
@@ -91,6 +93,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		inputAdapter.keyRelease(e);
+	}
+	
+	public GWorld getGameWorld() {
+		return gameWorld;
+	}
+
+	public void setGameWorld(GWorld gameWorld) {
+		this.gameWorld = gameWorld;
 	}
 
 }
