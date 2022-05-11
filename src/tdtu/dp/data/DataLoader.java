@@ -1,4 +1,4 @@
-package tdtu.dp.effect;
+package tdtu.dp.data;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,7 +6,6 @@ import java.io.IOException;
 
 public class DataLoader {
 	private static DataLoader instance = null;
-
 	private String mapFile = System.getProperty("user.dir") + "/src/data/map/map.txt";
 
 	private int[][] map;
@@ -29,7 +28,6 @@ public class DataLoader {
 	}
 
 	public void loadMap() throws IOException {
-
 		FileReader fr = new FileReader(mapFile);
 		BufferedReader br = new BufferedReader(fr);
 
@@ -48,13 +46,6 @@ public class DataLoader {
 			for (int j = 0; j < cols; j++)
 				instance.map[i][j] = Integer.parseInt(str[j]);
 		}
-
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++)
-				System.out.print(" " + instance.map[i][j]);
-			System.out.println();
-		}
-
 		br.close();
 
 	}

@@ -1,14 +1,13 @@
 package tdtu.dp.UI;
 
 import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import tdtu.dp.effect.DataLoader;
+import tdtu.dp.data.DataLoader;
 
 public class GFrame extends JFrame {
 
@@ -35,25 +34,11 @@ public class GFrame extends JFrame {
 		gamePanel = new GamePanel();
 		add(gamePanel);
 		this.addKeyListener(gamePanel);
+		
 	}
 	
 	public void startGame() {
 		gamePanel.startGame();
-	}
-
-	public GFrame(GraphicsConfiguration gc) {
-		super(gc);
-		// TODO Auto-generated constructor stub
-	}
-
-	public GFrame(String title) throws HeadlessException {
-		super(title);
-		// TODO Auto-generated constructor stub
-	}
-
-	public GFrame(String title, GraphicsConfiguration gc) {
-		super(title, gc);
-		// TODO Auto-generated constructor stub  
 	}
 
 }

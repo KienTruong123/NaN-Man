@@ -1,23 +1,18 @@
 package tdtu.dp.Objects;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-
 import javax.swing.ImageIcon;
-import javax.swing.text.Position;
-
-import tdtu.dp.UI.GFrame;
 
 public class Man extends Human {
-	public static final int RUNSPEED = 3;
+	public static final float RUNSPEED = 2.8f;
+
 	private Image manLeftImage;
 	private Image manRightImage;
 
 	public Man(float x, float y, GWorld gameWorld) {
-		super(x, y, 70, 90, 0.1f, 100, gameWorld);
+		super(x, y, 25, 55, 0.1f, 100, gameWorld);
 		setTeamType(LEAGUE);
 		setTimeForNoBehurt(2000000000);
 		manLeftImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/man_go_left.gif").getImage();
@@ -25,29 +20,21 @@ public class Man extends Human {
 	}
 
 	@Override
-	public void update() {
-		super.update();
-		if (getIsLanding()) {
-			setIsLanding(false);
-		}
-	}
-
-	@Override
 	public Rectangle getBoundForCollisionWithEnemy() {
 		// TODO Auto-generated method stub
 		Rectangle rect = getBoundForCollisionWithMap();
 
-		if (getIsDicking()) {
-			rect.x = (int) getX() - 22;
-			rect.y = (int) getY() - 20;
-			rect.width = 44;
-			rect.height = 65;
-		} else {
-			rect.x = (int) getX() - 22;
-			rect.y = (int) getY() - 40;
-			rect.width = 44;
-			rect.height = 80;
-		}
+//		if (getIsDicking()) {
+//			rect.x = (int) getX() - 22;
+//			rect.y = (int) getY() - 20;
+//			rect.width = 44;
+//			rect.height = 65;
+//		} else {
+//			rect.x = (int) getX() - 22;
+//			rect.y = (int) getY() - 40;
+//			rect.width = 44;
+//			rect.height = 80;
+//		}
 
 		return rect;
 	}
@@ -55,23 +42,24 @@ public class Man extends Human {
 	@Override
 	public void draw(Graphics g) {
 		Rectangle rect = getBoundForCollisionWithMap();
-		g.setColor(Color.RED);
 		if (getDirection() == RIGHT_DIR) {
-			g.drawImage(manRightImage,rect.x - (int) getGameWorld().getCamera().getX(),
-					rect.y - (int) getGameWorld().getCamera().getY() -5, rect.width, rect.height+10, null);
-		}else {
+			g.drawImage(manRightImage, rect.x - (int) getGameWorld().getCamera().getX(),
+					rect.y - (int) getGameWorld().getCamera().getY(), rect.width, rect.height , null);
+		} else {
 			g.drawImage(manLeftImage, rect.x - (int) getGameWorld().getCamera().getX(),
-					rect.y - (int) getGameWorld().getCamera().getY() -5, rect.width, rect.height+10, null);
+					rect.y - (int) getGameWorld().getCamera().getY(), rect.width, rect.height, null);
 		}
+//		drawBoundForCollisionWithMap(g);
 	}
 
 	@Override
 	public void run() {
 		if (getDirection() == LEFT_DIR)
-			setSpeedX(-3);
+			setSpeedX(-RUNSPEED);
 		else
-			setSpeedX(3);
+			setSpeedX(RUNSPEED);
 	}
+
 
 	@Override
 	public void jump() {
@@ -79,7 +67,8 @@ public class Man extends Human {
 		if (!getIsJumping()) {
 			setIsJumping(true);
 			setSpeedY(-5.0f);
-		} else {
+		} else if (getMaxNumOfJump()>0) {
+			setMaxNumOfJump(getMaxNumOfJump()-1);
 			Rectangle rectRightWall = getBoundForCollisionWithMap();
 			rectRightWall.x += 1;
 			Rectangle rectLeftWall = getBoundForCollisionWithMap();
@@ -95,7 +84,7 @@ public class Man extends Human {
 	}
 
 	@Override
-	public void dick() {
+	public void duck() {
 		if (!getIsJumping())
 			setIsDicking(true);
 	}
@@ -112,24 +101,22 @@ public class Man extends Human {
 
 	@Override
 	public void attack() {
-		FireBullet fireBullet = new FireBullet(getX(), getY(), getGameWorld());
+		FireBullet fireBullet = new FireBullet(getX(), getY()-getHeight()/3, getGameWorld());
 		fireBullet.setDirection(getDirection());
 		if (getDirection() == LEFT_DIR) {
 			fireBullet.setSpeedX(-10);
-			fireBullet.setX(fireBullet.getX() - 40);
+			fireBullet.setX(fireBullet.getX() - getWidth()*2);
 			if (getSpeedX() != 0 && getSpeedY() == 0) {
-				fireBullet.setX(fireBullet.getX() - 10);
-				fireBullet.setY(fireBullet.getY() - 5);
+				fireBullet.setX(fireBullet.getX() - getSpeedX());
 			}
 		} else {
 			fireBullet.setSpeedX(10);
-			fireBullet.setX(fireBullet.getX() + 40);
+			fireBullet.setX(fireBullet.getX() + getWidth()*2);
 			if (getSpeedX() != 0 && getSpeedY() == 0) {
-				fireBullet.setX(fireBullet.getX() + 10);
-				fireBullet.setY(fireBullet.getY() - 5);
+				fireBullet.setX(fireBullet.getX() + getSpeedX());
 			}
 		}
-
+		
 		fireBullet.setTeamType(getTeamType());
 		getGameWorld().getParticleManager().addObject(fireBullet);
 	}

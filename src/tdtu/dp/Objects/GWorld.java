@@ -11,6 +11,7 @@ public class GWorld {
 	private GMap map;
 	private Camera camera;
 	private ParticleManager particleManager;
+	private Ghost ghost;
 	
 	public ParticleManager getParticleManager() {
 		return particleManager;
@@ -25,8 +26,10 @@ public class GWorld {
 		getMan().setTeamType(Particle.LEAGUE);
 		map = new GMap(0, 0, this);
 		camera= new Camera(0, 0, GFrame.SCREEN_WIDTH,GFrame.SCREEN_HEIGHT, this);
+		ghost= new Ghost(300,420,this);
 		particleManager= new ParticleManager(this);
 		particleManager.addObject(getMan());
+		particleManager.addObject(ghost);
 	}
 
 	public void update() {

@@ -2,16 +2,10 @@ package tdtu.dp.UI;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import javax.swing.JPanel;
-
 import tdtu.dp.Objects.GWorld;
-import tdtu.dp.Objects.Man;
-import tdtu.dp.Objects.GMap;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
@@ -47,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, GFrame.SCREEN_WIDTH, GFrame.SCREEN_HEIGHT);
 		gameWorld.render(g);
-		}
+	}
 
 	@Override
 	public void run() {
@@ -94,7 +88,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		inputAdapter.keyRelease(e);
 	}
-	
+
 	public GWorld getGameWorld() {
 		return gameWorld;
 	}

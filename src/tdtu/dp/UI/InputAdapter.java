@@ -1,12 +1,15 @@
 package tdtu.dp.UI;
 
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import tdtu.dp.Objects.GWorld;
 import tdtu.dp.Objects.Particle;
 
 public class InputAdapter {
 
+	private final Set<Integer> pressed = new HashSet<Integer>();
 	private GWorld gameWorld;
 
 	public GWorld getGameWorld() {
@@ -24,39 +27,59 @@ public class InputAdapter {
 
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
+		pressed.add(key);
+		if (pressed.contains(KeyEvent.VK_W)) {
+			if (pressed.contains(KeyEvent.VK_META))
+				System.exit(1);
+		}
+		switch (key) {
+		case KeyEvent.VK_LEFT:
 			getGameWorld().getMan().setDirection(Particle.LEFT_DIR);
 			getGameWorld().getMan().run();
-		} else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
+			break;
+		case KeyEvent.VK_RIGHT:
 			getGameWorld().getMan().setDirection(Particle.RIGHT_DIR);
 			getGameWorld().getMan().run();
-		} else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-
-		} else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-
-		} else if (key == KeyEvent.VK_SPACE) {
+			break;
+		case KeyEvent.VK_UP:
 			getGameWorld().getMan().jump();
-		}else if (key == KeyEvent.VK_F) {
+			break;
+		case KeyEvent.VK_DOWN:
+			getGameWorld().getMan().duck();
+			break;
+		case KeyEvent.VK_A:
 			getGameWorld().getMan().attack();
+			break;
+
+		default:
 		}
+
 	}
 
 	public void keyRelease(KeyEvent e) {
 		int key = e.getKeyCode();
-		if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
+		pressed.remove(key);
+		switch (key) {
+		case KeyEvent.VK_LEFT:
 			if (getGameWorld().getMan().getSpeedX() < 0)
 				getGameWorld().getMan().stop();
-			;
-		} else if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
+			break;
+		case KeyEvent.VK_RIGHT:
 			if (getGameWorld().getMan().getSpeedX() > 0)
 				getGameWorld().getMan().stop();
-		} else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
+			break;
+		case KeyEvent.VK_UP:
 
-		} else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-
-		} else if (key == KeyEvent.VK_SPACE) {
-
+			break;
+		case KeyEvent.VK_DOWN:
+			getGameWorld().getMan().standUp();
+			break;
+		case KeyEvent.VK_A:
+			getGameWorld().getMan().attack();
+			break;
+		default:
 		}
+
 	}
 
 }

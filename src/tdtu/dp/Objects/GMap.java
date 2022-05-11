@@ -7,31 +7,31 @@ import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 
-import tdtu.dp.effect.DataLoader;
+import tdtu.dp.data.DataLoader;
 
 public class GMap extends GObject {
 	public int[][] map;
-	private int brickSize;
+	private int unitSize;
 	private Image brickImage;
 
 	public GMap(float x, float y, GWorld gameWorld) {
 		super(x, y, gameWorld);
-		this.brickSize = 30;
+		this.unitSize = 50;
 		map = DataLoader.getInstance().getMap();
 		brickImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/map/brick.jpeg").getImage();
 	}
 
-	public int getBrickSize() {
-		return brickSize;
+	public int getUnitSize() {
+		return unitSize;
 	}
 
-	public int getBrickRows() {
+	public int getRows() {
 		if (map != null)
 			return map.length;
 		return 0;
 	}
 
-	public int getBrickCols() {
+	public int getCols() {
 		if (map != null)
 			return map[0].length;
 		return 0;
@@ -43,33 +43,45 @@ public class GMap extends GObject {
 
 	public void draw(Graphics g) {
 		Camera camera = getGameWorld().getCamera();
-		g.setColor(Color.GRAY);
-		for (int y = 0; y < getBrickRows(); y++)
-			for (int x = 0; x < getBrickCols(); x++)
+		Man man = getGameWorld().getMan();
+		int lscreen = (int) (camera.getX() - getX()) / getUnitSize();
+		int rscreen = lscreen+(int)(camera.getWidthView()/getUnitSize()+1);
+		int tscreen = (int) (camera.getY() - getY()) / getUnitSize();
+		int bscreen = tscreen+(int)(camera.getHeightView()/getUnitSize()+1);
+		
+		if (lscreen < 0)
+			lscreen = 0;
+		if(rscreen>getCols())
+			rscreen=getCols();
+		if (tscreen < 0)
+			tscreen = 0;
+		if(bscreen>getCols())
+			bscreen=getCols();
+		
+		for (int y = 0; y < getRows(); y++)
+			for (int x = lscreen; x < rscreen; x++)
 				if (isBrick(x, y))
-					g.drawImage(brickImage,(int) getX() + x * getBrickSize() - (int) camera.getX(),
-							(int) getY() + y * getBrickSize() - (int) camera.getY(), getBrickSize(), getBrickSize(),null);
-//		g.fillRect((int) getX() + x * getBrickSize() - (int) camera.getX(),
-//		(int) getY() + y * getBrickSize() - (int) camera.getY(), getBrickSize(), getBrickSize());
+					g.drawImage(brickImage, (int) getX() + x * getUnitSize() - (int) camera.getX(),
+							(int) getY() + y * getUnitSize() - (int) camera.getY(), getUnitSize(), getUnitSize(), null);
 
 	}
 
 	public Rectangle getLandCollision(Rectangle rect) {
-		int minIndexX = rect.x / getBrickSize() - 2;
-		int maxIndexX = (rect.x + rect.width) / getBrickSize() + 2;
+		int minIndexX = rect.x / getUnitSize() - 2;
+		int maxIndexX = (rect.x + rect.width) / getUnitSize() + 2;
 
-		int indexY = (rect.y + rect.height) / getBrickSize();
+		int indexY = (rect.y + rect.height) / getUnitSize();
 
 		if (minIndexX < 0)
 			minIndexX = 0;
-		if (maxIndexX > getBrickCols())
-			maxIndexX = getBrickCols();
+		if (maxIndexX > getCols())
+			maxIndexX = getCols();
 
-		for (int y = indexY; y < map.length; y++) {
+		for (int y = indexY; y < getRows(); y++) {
 			for (int x = minIndexX; x < maxIndexX; x++) {
 				if (isBrick(x, y)) {
-					Rectangle r = new Rectangle((int) getX() + x * getBrickSize(), (int) getY() + y * getBrickSize(),
-							getBrickSize(), getBrickSize());
+					Rectangle r = new Rectangle((int) getX() + x * getUnitSize(), (int) getY() + y * getUnitSize(),
+							getUnitSize(), getUnitSize());
 					if (rect.intersects(r))
 						return r;
 				}
@@ -79,23 +91,23 @@ public class GMap extends GObject {
 	}
 
 	public Rectangle getRightWallCollision(Rectangle rect) {
-		int minIndexX = (rect.x + rect.width) / getBrickSize();
+		int minIndexX = (rect.x + rect.width) / getUnitSize();
 		int maxIndexX = minIndexX + 3;
-		if (maxIndexX > getBrickCols())
-			maxIndexX = getBrickCols();
+		if (maxIndexX > getCols())
+			maxIndexX = getCols();
 
-		int minIndexY = rect.y / getBrickSize() - 2;
-		int maxIndexY = (rect.y + rect.height) / getBrickSize() + 2;
+		int minIndexY = rect.y / getUnitSize() - 2;
+		int maxIndexY = (rect.y + rect.height) / getUnitSize() + 2;
 		if (minIndexY < 0)
 			minIndexY = 0;
-		if (maxIndexY > map.length)
-			maxIndexY = map.length;
+		if (maxIndexY > getRows())
+			maxIndexY = getRows();
 
 		for (int x = minIndexX; x < maxIndexX; x++) {
 			for (int y = minIndexY; y < maxIndexY; y++) {
 				if (isBrick(x, y)) {
-					Rectangle r = new Rectangle((int) getX() + x * getBrickSize(), (int) getY() + y * getBrickSize(),
-							getBrickSize(), getBrickSize());
+					Rectangle r = new Rectangle((int) getX() + x * getUnitSize(), (int) getY() + y * getUnitSize(),
+							getUnitSize(), getUnitSize());
 					if (r.y < rect.y + rect.height - 1 && rect.intersects(r))
 						return r;
 				}
@@ -105,23 +117,23 @@ public class GMap extends GObject {
 	}
 
 	public Rectangle getLeftWallCollision(Rectangle rect) {
-		int minIndexX = (rect.x + rect.width) / getBrickSize();
+		int minIndexX = (rect.x + rect.width) / getUnitSize();
 		int maxIndexX = minIndexX - 3;
 		if (maxIndexX < 0)
 			maxIndexX = 0;
 
-		int minIndexY = rect.y / getBrickSize() - 2;
-		int maxIndexY = (rect.y + rect.height) / getBrickSize() + 2;
+		int minIndexY = rect.y / getUnitSize() - 2;
+		int maxIndexY = (rect.y + rect.height) / getUnitSize() + 2;
 		if (minIndexY < 0)
 			minIndexY = 0;
-		if (maxIndexY > map.length)
-			maxIndexY = map.length;
+		if (maxIndexY > getRows())
+			maxIndexY = getRows();
 
 		for (int x = minIndexX; x >= maxIndexX; x--) {
 			for (int y = minIndexY; y < maxIndexY; y++) {
 				if (isBrick(x, y)) {
-					Rectangle r = new Rectangle((int) getX() + x * getBrickSize(), (int) getY() + y * getBrickSize(),
-							getBrickSize(), getBrickSize());
+					Rectangle r = new Rectangle((int) getX() + x * getUnitSize(), (int) getY() + y * getUnitSize(),
+							getUnitSize(), getUnitSize());
 					if (r.y < rect.y + rect.height - 1 && rect.intersects(r))
 						return r;
 				}
@@ -131,22 +143,22 @@ public class GMap extends GObject {
 	}
 
 	public Rectangle getTopCollision(Rectangle rect) {
-		int posX1 = rect.x / getBrickSize();
+		int posX1 = rect.x / getUnitSize();
 		posX1 -= 2;
-		int posX2 = (rect.x + rect.width) / getBrickSize();
+		int posX2 = (rect.x + rect.width) / getUnitSize();
 		posX2 += 2;
-		int posY = rect.y / getBrickSize();
+		int posY = rect.y / getUnitSize();
 
 		if (posX1 < 0)
 			posX1 = 0;
-		if (posX2 >= map[0].length)
-			posX2 = map[0].length - 1;
+		if (posX2 >= getCols())
+			posX2 = getCols() - 1;
 
 		for (int y = posY; y >= 0; y--) {
 			for (int x = posX1; x <= posX2; x++) {
-				if (map[y][x] == 1) {
-					Rectangle r = new Rectangle((int) getX() + x * getBrickSize(), (int) getY() + y * getBrickSize(),
-							getBrickSize(), getBrickSize());
+				if (isBrick(x, y)) {
+					Rectangle r = new Rectangle((int) getX() + x * getUnitSize(), (int) getY() + y * getUnitSize(),
+							getUnitSize(), getUnitSize());
 					if (rect.intersects(r))
 						return r;
 				}
@@ -158,7 +170,6 @@ public class GMap extends GObject {
 	@Override
 	void update() {
 		// TODO Auto-generated method stub
-
 	}
 
 }

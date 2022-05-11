@@ -42,7 +42,6 @@ public class FireBullet extends Bullet {
 	@Override
 	public void attack() {
 		// TODO Auto-generated method stub
-
 	}
 
 }
