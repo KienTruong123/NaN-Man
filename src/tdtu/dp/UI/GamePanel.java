@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import tdtu.dp.Objects.GWorld;
+import test.FPSCounter;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
@@ -14,6 +15,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	private boolean isRunning;
 	private InputAdapter inputAdapter;
 	private GWorld gameWorld;
+
 
 	public GamePanel() {
 		// TODO Auto-generated constructor stub
@@ -38,7 +40,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void paint(Graphics g) {
 		// TODO Auto-generated method stub
 
-		g.setColor(Color.WHITE);
+		g.setColor(Color.lightGray);
 		g.fillRect(0, 0, GFrame.SCREEN_WIDTH, GFrame.SCREEN_HEIGHT);
 		gameWorld.render(g);
 	}
@@ -50,16 +52,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		long period = 1000000000 / FPS;
 		long startTime;
 		long sleepTime;
-
 		while (isRunning) {
 			startTime = System.nanoTime();
 			// start
 			update();
-
 			// end
 			long deltaTime = System.nanoTime() - startTime;
 			sleepTime = period - deltaTime;
-
+			
 			try {
 				if (sleepTime > 0) {
 					Thread.sleep(sleepTime / 1000000);
@@ -70,13 +70,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 				// TODO: handle exception
 			}
 		}
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -88,6 +81,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		inputAdapter.keyRelease(e);
 	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
 
 	public GWorld getGameWorld() {
 		return gameWorld;

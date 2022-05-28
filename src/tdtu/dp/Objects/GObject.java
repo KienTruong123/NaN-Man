@@ -1,31 +1,31 @@
 package tdtu.dp.Objects;
 
 public abstract class GObject {
-	private double x;
-	private double y;
+	private float x;
+	private float y;
 
 	private GWorld gameWorld;
 
-	public GObject(double x, double y, GWorld gameWorld) {
+	public GObject(float x, float y, GWorld gameWorld) {
 		super();
 		this.x = x;
 		this.y = y;
 		this.gameWorld = gameWorld;
 	}
 
-	public double getX() {
+	public float getX() {
 		return x;
 	}
 
-	public void setX(double x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
-	public double getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(double y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 

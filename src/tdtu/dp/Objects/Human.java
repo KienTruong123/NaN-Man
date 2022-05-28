@@ -3,26 +3,14 @@ package tdtu.dp.Objects;
 import java.awt.Rectangle;
 
 public abstract class Human extends Particle {
-
-	private static int MAXNUMOFJUMP = 2;
+	private static byte MAXNUMOFJUMP = 2;
 
 	private boolean isJumping;
 	private boolean isDicking;
-	private int maxNumOfJump;
-
-	public int getMaxNumOfJump() {
-		return maxNumOfJump;
-	}
-
-	public void setMaxNumOfJump(int maxNumOfJump) {
-		this.maxNumOfJump = maxNumOfJump;
-	}
-
-	public Human(float x, float y, float width, float height, float mass, int blood, GWorld gameWorld) {
-		super(x, y, width, height, mass, blood, gameWorld);
-		setState(ALIVE);
-		setMaxNumOfJump(MAXNUMOFJUMP);
-	}
+	private byte maxNumOfJump;
+	private int power;
+	
+	private long startTimeNapPower;
 
 	public abstract void run();
 
@@ -33,6 +21,30 @@ public abstract class Human extends Particle {
 	public abstract void standUp();
 
 	public abstract void stop();
+
+	public Human(float x, float y, float width, float height, float mass, int blood, int power, GWorld gameWorld) {
+		super(x, y, width, height, mass, blood, gameWorld);
+		setState(ALIVE);
+		setMaxNumOfJump(MAXNUMOFJUMP);
+		setPower(power);
+		setStartTimeNapPower(System.nanoTime());
+	}
+
+	public byte getMaxNumOfJump() {
+		return maxNumOfJump;
+	}
+
+	public void setMaxNumOfJump(byte maxNumOfJump) {
+		this.maxNumOfJump = maxNumOfJump;
+	}
+
+	public int getPower() {
+		return power;
+	}
+
+	public void setPower(int power) {
+		this.power = power;
+	}
 
 	public boolean getIsJumping() {
 		return isJumping;
@@ -50,7 +62,7 @@ public abstract class Human extends Particle {
 		this.isDicking = isDicking;
 	}
 
-	public boolean handleClimbRight() {
+	public boolean handleRightCollisions() {
 		if (getDirection() == RIGHT_DIR
 				&& getGameWorld().getMap().getRightWallCollision(getBoundForCollisionWithMap()) != null) {
 			Rectangle rectRightWall = getGameWorld().getMap().getRightWallCollision(getBoundForCollisionWithMap());
@@ -60,7 +72,7 @@ public abstract class Human extends Particle {
 		return false;
 	}
 
-	public boolean handleClimbLeft() {
+	public boolean handleLeftCollisions() {
 		if (getDirection() == LEFT_DIR
 				&& getGameWorld().getMap().getLeftWallCollision(getBoundForCollisionWithMap()) != null) {
 			Rectangle rectLeftWall = getGameWorld().getMap().getLeftWallCollision(getBoundForCollisionWithMap());
@@ -74,7 +86,7 @@ public abstract class Human extends Particle {
 		Rectangle rectLand = getGameWorld().getMap().getLandCollision(getBoundForCollisionWithMapFuture());
 		if (rectLand != null) {
 			setIsJumping(false);
-			setMaxNumOfJump(MAXNUMOFJUMP + (int) (Math.random() * 3));
+			setMaxNumOfJump((byte) (MAXNUMOFJUMP + (Math.random() * 3)));
 			setSpeedY(0);
 			setY(rectLand.y - getHeight() / 2);
 			return true;
@@ -97,13 +109,13 @@ public abstract class Human extends Particle {
 		boundForCollisionWithMapFuture.y += (getSpeedY() != 0 ? getSpeedY() : 2);
 		return boundForCollisionWithMapFuture;
 	}
-	
+
 	public void handleAction() {
 		setX(getX() + getSpeedX());
-		handleClimbRight();
-		handleClimbLeft();
-		
-		//jumping
+		handleRightCollisions();
+		handleLeftCollisions();
+
+		// jumping
 		if (!(handleLandCollisions() || handleTopCollisions())) {
 			setIsJumping(true);
 			setSpeedY(getSpeedY() + getMass());
@@ -117,6 +129,19 @@ public abstract class Human extends Particle {
 		if (getState() == ALIVE || getState() == NOBEHURT) {
 			handleAction();
 		}
+
+		if (getPower() < 100 && System.nanoTime() -getStartTimeNapPower()>  1000*1000000 ) {
+			setStartTimeNapPower(System.nanoTime());
+			setPower(getPower() + 5);
+		}
+
 	}
 
+	public long getStartTimeNapPower() {
+		return startTimeNapPower;
+	}
+
+	public void setStartTimeNapPower(long startTimeNapPower) {
+		this.startTimeNapPower = startTimeNapPower;
+	}
 }

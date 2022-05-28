@@ -8,7 +8,7 @@ public class DataLoader {
 	private static DataLoader instance = null;
 	private String mapFile = System.getProperty("user.dir") + "/src/data/map/map.txt";
 
-	private int[][] map;
+	private byte[][] map;
 
 	private DataLoader() {
 	}
@@ -23,7 +23,7 @@ public class DataLoader {
 		loadMap();
 	}
 
-	public int[][] getMap() {
+	public byte[][] getMap() {
 		return instance.map;
 	}
 
@@ -34,20 +34,18 @@ public class DataLoader {
 		String line = null;
 
 		line = br.readLine();
-		int rows = Integer.parseInt(line);
+		short rows = Short.parseShort(line);
 		line = br.readLine();
-		int cols = Integer.parseInt(line);
+		short cols = Short.parseShort(line);
 
-		instance.map = new int[rows][cols];
+		instance.map = new byte[rows][cols];
 
 		for (int i = 0; i < rows; i++) {
 			line = br.readLine();
 			String[] str = line.split(" ");
 			for (int j = 0; j < cols; j++)
-				instance.map[i][j] = Integer.parseInt(str[j]);
+				instance.map[i][j] = Byte.parseByte(str[j]);
 		}
 		br.close();
-
 	}
-
 }

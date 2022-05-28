@@ -1,5 +1,10 @@
 package tdtu.dp.Objects;
 
+import tdtu.dp.behavior.AttackBehavior;
+import tdtu.dp.behavior.FireShootingBehavior;
+import tdtu.dp.behavior.HalfArcShooting;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -10,46 +15,41 @@ public class Man extends Human {
 
 	private Image manLeftImage;
 	private Image manRightImage;
+	private Image jupmLeftImage;
+	private Image jumpRightImage;
+
+	private AttackBehavior attackBehavior;
 
 	public Man(float x, float y, GWorld gameWorld) {
-		super(x, y, 25, 55, 0.1f, 100, gameWorld);
+		super(x, y, 20, 25, 0.1f, 100,100, gameWorld);
+		attackBehavior = new FireShootingBehavior();
 		setTeamType(LEAGUE);
+		setState(ALIVE);
 		setTimeForNoBehurt(2000000000);
-		manLeftImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/man_go_left.gif").getImage();
-		manRightImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/man_go_right.gif").getImage();
+		setDamage(2);
+		manLeftImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/goLeft.gif").getImage();
+		manRightImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/goRight.gif").getImage();
+		jupmLeftImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/jumpLeft.png").getImage();
+		jumpRightImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/object/jumpRight.png").getImage();
 	}
 
 	@Override
 	public Rectangle getBoundForCollisionWithEnemy() {
 		// TODO Auto-generated method stub
 		Rectangle rect = getBoundForCollisionWithMap();
-
-//		if (getIsDicking()) {
-//			rect.x = (int) getX() - 22;
-//			rect.y = (int) getY() - 20;
-//			rect.width = 44;
-//			rect.height = 65;
-//		} else {
-//			rect.x = (int) getX() - 22;
-//			rect.y = (int) getY() - 40;
-//			rect.width = 44;
-//			rect.height = 80;
-//		}
+		if (getIsDicking()) {
+			rect.x = (int) getX() - 22;
+			rect.y = (int) getY() - 20;
+			rect.width = 44;
+			rect.height = 65;
+		} else {
+			rect.x = (int) getX() - 22;
+			rect.y = (int) getY() - 40;
+			rect.width = 44;
+			rect.height = 80;
+		}
 
 		return rect;
-	}
-
-	@Override
-	public void draw(Graphics g) {
-		Rectangle rect = getBoundForCollisionWithMap();
-		if (getDirection() == RIGHT_DIR) {
-			g.drawImage(manRightImage, rect.x - (int) getGameWorld().getCamera().getX(),
-					rect.y - (int) getGameWorld().getCamera().getY(), rect.width, rect.height , null);
-		} else {
-			g.drawImage(manLeftImage, rect.x - (int) getGameWorld().getCamera().getX(),
-					rect.y - (int) getGameWorld().getCamera().getY(), rect.width, rect.height, null);
-		}
-//		drawBoundForCollisionWithMap(g);
 	}
 
 	@Override
@@ -60,15 +60,13 @@ public class Man extends Human {
 			setSpeedX(RUNSPEED);
 	}
 
-
 	@Override
 	public void jump() {
-
 		if (!getIsJumping()) {
 			setIsJumping(true);
 			setSpeedY(-5.0f);
-		} else if (getMaxNumOfJump()>0) {
-			setMaxNumOfJump(getMaxNumOfJump()-1);
+		} else if (getMaxNumOfJump() > 0) {
+			setMaxNumOfJump((byte) (getMaxNumOfJump() - 1));
 			Rectangle rectRightWall = getBoundForCollisionWithMap();
 			rectRightWall.x += 1;
 			Rectangle rectLeftWall = getBoundForCollisionWithMap();
@@ -79,7 +77,6 @@ public class Man extends Human {
 			} else if (getGameWorld().getMap().getLeftWallCollision(rectLeftWall) != null && getSpeedX() < 0) {
 				setSpeedY(-5.0f);
 			}
-
 		}
 	}
 
@@ -101,28 +98,59 @@ public class Man extends Human {
 
 	@Override
 	public void attack() {
-		FireBullet fireBullet = new FireBullet(getX(), getY()-getHeight()/3, getGameWorld());
-		fireBullet.setDirection(getDirection());
-		if (getDirection() == LEFT_DIR) {
-			fireBullet.setSpeedX(-10);
-			fireBullet.setX(fireBullet.getX() - getWidth()*2);
-			if (getSpeedX() != 0 && getSpeedY() == 0) {
-				fireBullet.setX(fireBullet.getX() - getSpeedX());
-			}
-		} else {
-			fireBullet.setSpeedX(10);
-			fireBullet.setX(fireBullet.getX() + getWidth()*2);
-			if (getSpeedX() != 0 && getSpeedY() == 0) {
-				fireBullet.setX(fireBullet.getX() + getSpeedX());
-			}
+		if (getPower() > 10) {
+			setPower(getPower()-3);
+			attackBehavior.attack(getX(),getY(),getSpeedX(),getSpeedY(),getDirection(),getTeamType(),getGameWorld());
 		}
-		
-		fireBullet.setTeamType(getTeamType());
-		getGameWorld().getParticleManager().addObject(fireBullet);
 	}
 
 	@Override
-	public void hurtingCallback() {
+	public void update() {
+		super.update();
 	}
 
+	@Override
+	public void draw(Graphics g) {
+		drawMan(g);
+		drawBlood(g);
+		drawPower(g);
+	}
+
+	public void drawMan(Graphics g) {
+		Rectangle rect = getBoundForCollisionWithMap();
+		if (getDirection() == RIGHT_DIR) {
+			if (getIsJumping()) {
+				g.drawImage(jumpRightImage, rect.x - (int) getGameWorld().getCamera().getX(),
+						rect.y - (int) getGameWorld().getCamera().getY(), (int) (rect.width * 1.2),
+						(int) (rect.height * 1.5), null);
+			} else {
+				g.drawImage(manRightImage, rect.x - (int) getGameWorld().getCamera().getX(),
+						rect.y - (int) getGameWorld().getCamera().getY(), rect.width, rect.height, null);
+			}
+		} else {
+			if (getIsJumping()) {
+				g.drawImage(jupmLeftImage, rect.x - (int) getGameWorld().getCamera().getX(),
+						rect.y - (int) getGameWorld().getCamera().getY(), (int) (rect.width * 1.2),
+						(int) (rect.height * 1.5), null);
+			} else {
+				g.drawImage(manLeftImage, rect.x - (int) getGameWorld().getCamera().getX(),
+						rect.y - (int) getGameWorld().getCamera().getY(), rect.width, rect.height, null);
+			}
+		}
+//		drawBoundForCollisionWithMap(g);
+	}
+
+	public void drawBlood(Graphics g) {
+		g.setColor(Color.GRAY);
+		g.fillRect(19, 59, 102, 22);
+		g.setColor(Color.red);
+		g.fillRect(20, 60, getBlood(), 20);
+	}
+
+	private void drawPower(Graphics g) {
+		g.setColor(Color.GRAY);
+		g.fillRect(19, 29, 102, 22);
+		g.setColor(Color.BLUE);
+		g.fillRect(20, 30, getPower(), 20);
+	}
 }

@@ -1,8 +1,8 @@
 package tdtu.dp.Objects;
 
 public class Camera extends GObject {
-	private double widthView;
-	private double heightView;
+	private float widthView;
+	private float heightView;
 	private boolean isLocked = false;
 
 	public static int MAX_HEIGHT=250;
@@ -43,7 +43,7 @@ public class Camera extends GObject {
 		return widthView;
 	}
 
-	public void setWidthView(double widthView) {
+	public void setWidthView(float widthView) {
 		this.widthView = widthView;
 	}
 
@@ -51,7 +51,7 @@ public class Camera extends GObject {
 		return heightView;
 	}
 
-	public void setHeightView(double heightView) {
+	public void setHeightView(float heightView) {
 		this.heightView = heightView;
 	}
 

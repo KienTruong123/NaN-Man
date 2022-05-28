@@ -1,6 +1,5 @@
 package tdtu.dp.Objects;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -10,13 +9,13 @@ import javax.swing.ImageIcon;
 import tdtu.dp.data.DataLoader;
 
 public class GMap extends GObject {
-	public int[][] map;
-	private int unitSize;
+	public byte[][] map;
+	private short unitSize;
 	private Image brickImage;
 
 	public GMap(float x, float y, GWorld gameWorld) {
 		super(x, y, gameWorld);
-		this.unitSize = 50;
+		this.unitSize = 30;
 		map = DataLoader.getInstance().getMap();
 		brickImage = new ImageIcon(System.getProperty("user.dir") + "/src/data/map/brick.jpeg").getImage();
 	}
@@ -41,35 +40,9 @@ public class GMap extends GObject {
 		return map[y][x] == 1;
 	}
 
-	public void draw(Graphics g) {
-		Camera camera = getGameWorld().getCamera();
-		Man man = getGameWorld().getMan();
-		int lscreen = (int) (camera.getX() - getX()) / getUnitSize();
-		int rscreen = lscreen+(int)(camera.getWidthView()/getUnitSize()+1);
-		int tscreen = (int) (camera.getY() - getY()) / getUnitSize();
-		int bscreen = tscreen+(int)(camera.getHeightView()/getUnitSize()+1);
-		
-		if (lscreen < 0)
-			lscreen = 0;
-		if(rscreen>getCols())
-			rscreen=getCols();
-		if (tscreen < 0)
-			tscreen = 0;
-		if(bscreen>getCols())
-			bscreen=getCols();
-		
-		for (int y = 0; y < getRows(); y++)
-			for (int x = lscreen; x < rscreen; x++)
-				if (isBrick(x, y))
-					g.drawImage(brickImage, (int) getX() + x * getUnitSize() - (int) camera.getX(),
-							(int) getY() + y * getUnitSize() - (int) camera.getY(), getUnitSize(), getUnitSize(), null);
-
-	}
-
 	public Rectangle getLandCollision(Rectangle rect) {
 		int minIndexX = rect.x / getUnitSize() - 2;
 		int maxIndexX = (rect.x + rect.width) / getUnitSize() + 2;
-
 		int indexY = (rect.y + rect.height) / getUnitSize();
 
 		if (minIndexX < 0)
@@ -170,6 +143,30 @@ public class GMap extends GObject {
 	@Override
 	void update() {
 		// TODO Auto-generated method stub
+	}
+
+	public void draw(Graphics g) {
+		Camera camera = getGameWorld().getCamera();
+		Man man = getGameWorld().getMan();
+		int lscreen = (int) (camera.getX() - getX()) / getUnitSize();
+		int rscreen = lscreen + (int) (camera.getWidthView() / getUnitSize() + 1);
+		int tscreen = (int) (camera.getY() - getY()) / getUnitSize();
+		int bscreen = tscreen + (int) (camera.getHeightView() / getUnitSize() + 1);
+
+		if (lscreen < 0)
+			lscreen = 0;
+		if (rscreen > getCols())
+			rscreen = getCols();
+		if (tscreen < 0)
+			tscreen = 0;
+		if (bscreen > getRows())
+			bscreen = getRows();
+
+		for (int y = tscreen; y < bscreen; y++)
+			for (int x = lscreen; x < rscreen; x++)
+				if (isBrick(x, y))
+					g.drawImage(brickImage, (int) getX() + x * getUnitSize() - (int) camera.getX(),
+							(int) getY() + y * getUnitSize() - (int) camera.getY(), getUnitSize(), getUnitSize(), null);
 	}
 
 }

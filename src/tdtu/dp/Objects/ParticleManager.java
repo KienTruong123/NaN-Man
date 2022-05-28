@@ -2,6 +2,7 @@ package tdtu.dp.Objects;
 
 import java.awt.Graphics;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,33 +20,30 @@ public class ParticleManager {
 		return gameWorld;
 	}
 
+	public void addObjects(Iterator<Particle> objects) {
+		synchronized (particles) {
+			while (objects.hasNext()) {
+				particles.add(objects.next());
+			}
+		}
+	}
+
 	public void addObject(Particle Particle) {
 		synchronized (particles) {
 			particles.add(Particle);
 		}
 	}
 
-	public void RemoveObject(Particle Particle) {
-		synchronized (particles) {
-			for (int id = 0; id < particles.size(); id++) {
-				Particle object = particles.get(id);
-				if (object == Particle)
-					particles.remove(id);
-			}
-		}
-	}
-
 	public Particle getCollisionWidthEnemyObject(Particle object) {
 		synchronized (particles) {
-			for (int id = 0; id < particles.size(); id++) {
-				Particle objectInList = particles.get(id);
-				if (object.getTeamType() != objectInList.getTeamType() && object.getBoundForCollisionWithEnemy()
-						.intersects(objectInList.getBoundForCollisionWithEnemy())) {
-					return objectInList;
-				}
+			for (Particle particleItor: particles) {
+				if (object.getTeamType() != particleItor.getTeamType() && object.getBoundForCollisionWithEnemy()
+						.intersects(particleItor.getBoundForCollisionWithEnemy())) {
+					return particleItor;
 			}
 		}
 		return null;
+		}
 	}
 
 	public void updateObjects() {
@@ -54,10 +52,12 @@ public class ParticleManager {
 				Particle object = particles.get(id);
 				if (!object.isObjectOutOfCameraView())
 					object.update();
+				else {particles.remove(id);}
 				if (object.getState() == Particle.DEATH) {
 					particles.remove(id);
 				}
 			}
+//	System.out.println(particles.size());
 		}
 	}
 
@@ -68,4 +68,6 @@ public class ParticleManager {
 					object.draw(g);
 		}
 	}
+	
+	
 }

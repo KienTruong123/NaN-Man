@@ -4,21 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-public abstract class Particle extends GObject {
+import tdtu.dp.state.State;
 
+public abstract class Particle extends GObject implements State {
 	public static final boolean LEAGUE = true;
 	public static final boolean ENEMY = false;
-
 	public static final int LEFT_DIR = 0;
 	public static final int RIGHT_DIR = 1;
 
-	public static final int ALIVE = 0;
-	public static final int BEHURT = 1;
-	public static final int NOBEHURT = 2;
-	public static final int DEATH = 3;
-	
 	private int state = ALIVE;
-
 	private float width;
 	private float height;
 	private float mass;
@@ -34,8 +28,8 @@ public abstract class Particle extends GObject {
 	private long startTimeNoBeHurt;
 	private long timeForNoBeHurt;
 
-	public Particle(double d, double e, float width, float height, float mass, int blood, GWorld gameWorld) {
-		super(d, e, gameWorld);
+	public Particle(float x, float y, float width, float height, float mass, int blood, GWorld gameWorld) {
+		super(x, y, gameWorld);
 		setWidth(width);
 		setHeight(height);
 		setMass(mass);
@@ -162,19 +156,6 @@ public abstract class Particle extends GObject {
 	public void beHurt(int damage) {
 		setBlood(getBlood() - damage);
 		setState(BEHURT);
-		hurtingCallback();
-	}
-
-	@Override
-	public void update() {
-		switch (state) {
-		case ALIVE:
-		case NOBEHURT:
-			if (System.nanoTime() - getStartTimeNoBeHurt() > getTimeForNoBeHurt())
-				state = ALIVE;
-			break;
-		}
-
 	}
 
 	public void drawBoundForCollisionWithMap(Graphics g) {
@@ -193,9 +174,34 @@ public abstract class Particle extends GObject {
 
 	public abstract Rectangle getBoundForCollisionWithEnemy();
 
-	public abstract void draw(Graphics g);
+	@Override
+	public void update() {
 
-	public void hurtingCallback() {
-	};
+		switch (state) {
+		case ALIVE:
+			Particle object = getGameWorld().getParticleManager().getCollisionWidthEnemyObject(this);
+			if (object != null) {
+				System.out.println(System.currentTimeMillis());
+				if (object.getDamage() > 0) {
+					beHurt(object.getDamage());
+					System.out.println(object.getDamage());
+				}
+			}
+			break;
+		case BEHURT:
+			state = NOBEHURT;
+			startTimeNoBeHurt = System.nanoTime();
+			if (getBlood() == 0)
+				state = DEATH;
+			break;
+		case NOBEHURT:
+			if (System.nanoTime() - getStartTimeNoBeHurt() > getTimeForNoBeHurt())
+				state = ALIVE;
+			break;
+		}
+
+	}
+
+	public abstract void draw(Graphics g);
 
 }
