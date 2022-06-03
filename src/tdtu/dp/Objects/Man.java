@@ -111,7 +111,8 @@ public class Man extends Human {
 
 	@Override
 	public void draw(Graphics g) {
-		drawMan(g);
+		if (getState() == NOBEHURT && (System.nanoTime() / 10000000) % 2 != 1){}else{
+		drawMan(g);}
 		drawBlood(g);
 		drawPower(g);
 	}

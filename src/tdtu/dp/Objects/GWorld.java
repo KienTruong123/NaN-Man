@@ -33,7 +33,7 @@ public class GWorld {
 	public void update() {
 		// generate ghosts
 		if (System.nanoTime() - startTimeAddEnemy > 10000 * 1000000 *10.) {
-			Ghost ghost=  GhostAbtractFactory.createRandomGhost(camera.getX()+getMap().getUnitSize()*30,camera.getY()+getMap().getUnitSize(),this);
+			Ghost ghost=  GhostAbtractFactory.createRandomGhost(camera.getX()+getMap().getUnitSize()*10,camera.getY()+getMap().getUnitSize(),this);
 				ghost.setTeamType(Particle.ENEMY);
 			particleManager.addObject(ghost);
 			startTimeAddEnemy = System.nanoTime();

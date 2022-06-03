@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class ShapeshiftingGhost  extends Ghost{
 
-    public static final float RUNSPEED = 0.5f;
+    public static final float RUNSPEED = 0.8f;
     private long startTimeToShoot;
     private AttackBehavior attackBehavior;
     private Image ghostImage;
@@ -64,21 +64,7 @@ public class ShapeshiftingGhost  extends Ghost{
 
     @Override
     public void attack() {
-        Bullet bullet = new FireBullet(getX(), getY(), getGameWorld());
-        bullet.setSpeedX(getDirection()==RIGHT_DIR?RUNSPEED * 5:RUNSPEED * -5);
-        bullet.setDirection(getDirection());
-        bullet.setTeamType(getTeamType());
-
-        for(int i=0;i<5; i++) {
-            Bullet cloneBullet = bullet.clone();
-            cloneBullet.setSpeedY(i);
-            getGameWorld().getParticleManager().addObject(cloneBullet);
-        }
-        for(int i=0;i<5; i++) {
-            Bullet cloneBullet = bullet.clone();
-            cloneBullet.setSpeedY(-i);
-            getGameWorld().getParticleManager().addObject(cloneBullet);
-        }
+        attackBehavior.attack(getX(),getY(),getSpeedX(),getSpeedY(),getDirection(),getTeamType(),getGameWorld());
     }
 
     @Override
